@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>k09i09听书</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>k09i09听书</h1>
+        
+        <!-- 按钮导航栏 -->
+        <div class="nav-buttons">
+            <button onclick="toggleSection('images')">图片展示</button>
+            <button onclick="toggleSection('videos')">视频展示</button>
+            <button onclick="toggleSection('novels')">小说展示</button>
+            <button onclick="toggleSection('analytics')" class="analytics-btn">
+                <i class="fas fa-chart-bar"></i> 数据分析
+            </button>
+        </div>
+
+        <!-- 内容区域 -->
+        <div id="images" class="content" style="display: none;">
+            <div class="upload-section">
+                <h3>上传新图片</h3>
+                <input type="file" id="imageFile" accept="image/*" multiple style="display: none;">
+                <button onclick="document.getElementById('imageFile').click()" class="upload-btn">
+                    <i class="fas fa-image"></i> 上传图片
+                </button>
+            </div>
+            <div class="images-container">
+                <!-- 上传的图片将显示在这里 -->
+            </div>
+        </div>
+
+        <div id="videos" class="content" style="display: none;">
+            <div class="upload-section">
+                <h3>上传新视频</h3>
+                <input type="file" id="videoFile" accept="video/*" multiple style="display: none;">
+                <button onclick="document.getElementById('videoFile').click()" class="upload-btn">
+                    <i class="fas fa-video"></i> 上传视频
+                </button>
+            </div>
+            <div class="videos-container">
+                <!-- 上传的视频将显示在这里 -->
+            </div>
+        </div>
+
+        <div id="novels" class="content" style="display: none;">
+            <!-- 语音控制面板移到最上面 -->
+            <div class="upload-section">
+                <h3>语音设置</h3>
+                <div class="voice-controls">
+                    <div class="control-group">
+                        <label for="voiceSelect">选择声音:</label>
+                        <select id="voiceSelect"></select>
+                        <button onclick="testVoice()" class="test-voice-btn">
+                            <i class="fas fa-volume-up"></i> 测试声音
+                        </button>
+                    </div>
+                    <div class="control-group">
+                        <label for="targetLang">翻译语言:</label>
+                        <select id="targetLang">
+                            <option value="zh-CN">中文</option>
+                            <option value="en-US">英语</option>
+                            <option value="ja-JP">日语</option>
+                            <option value="ko-KR">韩语</option>
+                            <option value="fr-FR">法语</option>
+                            <option value="de-DE">德语</option>
+                        </select>
+                        <button onclick="toggleTranslation()" class="translate-btn">
+                            <i class="fas fa-language"></i> 翻译
+                        </button>
+                    </div>
+                    <div class="control-group">
+                        <label for="voiceSpeed">语速:</label>
+                        <input type="range" id="voiceSpeed" min="0.5" max="2" step="0.1" value="1">
+                        <span id="speedValue">1.0</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="voiceVolume">音量:</label>
+                        <input type="range" id="voiceVolume" min="0" max="1" step="0.1" value="1">
+                        <span id="volumeValue">1.0</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="voicePitch">音高:</label>
+                        <input type="range" id="voicePitch" min="0.5" max="2" step="0.1" value="1">
+                        <span id="pitchValue">1.0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 上传区域 -->
+            <div class="upload-section">
+                <h3>上传新小说</h3>
+                <input type="file" id="novelFile" accept=".txt" style="display: none;">
+                <button onclick="clickUpload()" class="upload-btn">点击上传小说</button>
+            </div>
+            
+            <!-- 小说列表 -->
+            <div id="novelsList">
+                <h3>小说列表</h3>
+                <div class="novels-container">
+                    <!-- 上传的小说将显示在这里 -->
+                </div>
+            </div>
+        </div>
+
+        <div id="analytics" class="content" style="display: none;">
+            <div class="analytics-container">
+                <div class="analytics-header">
+                    <h2>网站数据分析</h2>
+                    <button onclick="refreshAnalytics()" class="refresh-btn">
+                        <i class="fas fa-sync-alt"></i> 刷新数据
+                    </button>
+                </div>
+                
+                <div class="analytics-grid">
+                    <!-- 访问统计 -->
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <i class="fas fa-users"></i>
+                            <h3>访问统计</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="stat-item">
+                                <span class="stat-label">总访问量</span>
+                                <span class="stat-value" id="totalVisits">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">今日访问</span>
+                                <span class="stat-value" id="todayVisits">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 阅读统计 -->
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <i class="fas fa-book-reader"></i>
+                            <h3>阅读统计</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="stat-item">
+                                <span class="stat-label">总阅读时长</span>
+                                <span class="stat-value" id="totalReadingTime">0分钟</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">今日阅读时长</span>
+                                <span class="stat-value" id="todayReadingTime">0分钟</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">已读小说</span>
+                                <span class="stat-value" id="readNovels">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">平均阅读速度</span>
+                                <span class="stat-value" id="avgReadingSpeed">0字/分钟</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 文件统计 -->
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <i class="fas fa-file-alt"></i>
+                            <h3>文件统计</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="stat-item">
+                                <span class="stat-label">小说数量</span>
+                                <span class="stat-value" id="novelCount">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">图片数量</span>
+                                <span class="stat-value" id="imageCount">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">视频数量</span>
+                                <span class="stat-value" id="videoCount">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 存储统计 -->
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <i class="fas fa-database"></i>
+                            <h3>存储统计</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="stat-item">
+                                <span class="stat-label">已用空间</span>
+                                <span class="stat-value" id="usedStorage">0 MB</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">剩余空间</span>
+                                <span class="stat-value" id="remainingStorage">0 MB</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 使用趋势 -->
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line"></i>
+                            <h3>使用趋势</h3>
+                        </div>
+                        <div class="card-content">
+                            <canvas id="trendsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
